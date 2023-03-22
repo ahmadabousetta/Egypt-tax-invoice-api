@@ -6,6 +6,7 @@ set app_dir=%~dp0
 
 cd /d "%app_dir%"
 
-
 call publish\EInvoicingSigner.exe  %app_dir% 60906090 "Egypt Trust Sealing CA"
+
+@REM uncomment the below line if you need to pause the cmd screen after it finishes to debug or read output.
 @REM PAUSE
