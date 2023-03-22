@@ -1,0 +1,17 @@
+1. Install latest python version from Windows Microsoft store. Your windows version must be at least Windows 8.
+Make sure python is installed by running "py --version" in cmd. You should see 3.9 minimum.
+If Microsoft store is not working, download from python.org
+
+2. Create a folder for installing the script. (e.g. /ahmad/tax/api_python)
+
+3. Create another folder where the script expects excel docs. (e.g. /ahmad/tax/upload)
+
+4. If not already installed, install .NET Core 7.0 from https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=msbuild-developerpacks
+
+5. Compile the c# signer code. Or use the already compiled files (Generally it's not recommended to use compiled files from unknown sources.)
+
+6. Inside the script folder extract all project files.
+
+7. Run install.bat one time only. Wait for "Press any key to continue..."
+
+8. Run run-tax-api.bat whenever you want to run the script.You can place a shortcut anywhere.
