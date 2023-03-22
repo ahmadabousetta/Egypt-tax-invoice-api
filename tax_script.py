@@ -168,9 +168,7 @@ def upload_doc(invoice):
         payload = json.load(open(signed_file, "r", encoding="utf-8"))
     
     
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     url = "https://api.invoicing.eta.gov.eg/api/v1/documentsubmissions"
-
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {token}",
