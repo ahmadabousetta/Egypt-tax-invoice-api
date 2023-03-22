@@ -8,4 +8,4 @@ cd /d "%app_dir%"
 
 
 call publish\EInvoicingSigner.exe  %app_dir% 60906090 "Egypt Trust Sealing CA"
-PAUSE
+@REM PAUSE
