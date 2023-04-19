@@ -3,6 +3,7 @@ import json
 import os
 import sys
 import subprocess
+import datetime
 
 import numpy as np
 import pandas as pd
@@ -42,8 +43,17 @@ def get_token(credentials_file):
 
 
 def upload_doc(invoice):
+    # read invoice
     df_main = pd.read_excel(invoice, nrows=1)
     df_main = df_main.loc[0]
+
+    # Always set invoice time to two hours before submission to avoid late submission errors
+    # remove next line if you want to use the invoice time in the excel sheet
+    df_main["date"] = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
+    df_main["date"] = df_main["date"].strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
+    )  # 2020-12-31T23:59:59Z
+
     df_issuer_address = pd.read_excel(
         invoice, header=None, index_col=0, usecols="A:B", skiprows=2, nrows=6
     )
@@ -131,9 +141,7 @@ def upload_doc(invoice):
                 },
                 "documentType": "I" if df_main["Inv type"] == 3 else "c",
                 "documentTypeVersion": "1.0",
-                "dateTimeIssued": df_main["date"].strftime(
-                    "%Y-%m-%dT00:00:00Z"
-                ),  # Failed with two days old. Also, can't be in future.
+                "dateTimeIssued": df_main["date"],  # 2020-12-31T23:59:59Z
                 "taxpayerActivityCode": str(df_main["Activity code"]),
                 "internalID": str(df_main["InternalID"]),
                 "purchaseOrderReference": str(df_main["PO number"]),
@@ -151,33 +159,45 @@ def upload_doc(invoice):
 
     # dump payload to json file. The c# signer expects a single documnent.
     unsigned_file = "./c#_signer/SourceDocumentJson.json"
-    json.dump(payload["documents"][0], open(unsigned_file, "w", encoding="utf-8"), indent=4)
-    
+    json.dump(
+        payload["documents"][0],
+        open(unsigned_file, "w", encoding="utf-8"),
+        indent=4,
+        ensure_ascii=False,
+    )
+
     # run .bat file to sign the json file
     subprocess.run(["c#_signer\SubmitInvoices.bat"])
-    
+
     # check cades signature. If it's invalid, send without signature
     with open("./c#_signer/Cades.txt", "r") as f:
         signature = f.read()
     if len(signature) < 20:
         print(f"Signature '{signature}' is invalid. Sending without signature.")
-        payload['documents'][0]['documentTypeVersion'] = "0.9"
+        payload["documents"][0]["documentTypeVersion"] = "0.9"
     else:
         # load signed json file
         signed_file = "./c#_signer/FullSignedDocument.json"
         payload = json.load(open(signed_file, "r", encoding="utf-8"))
-    
-    
+
     url = "https://api.invoicing.eta.gov.eg/api/v1/documentsubmissions"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {token}",
     }
-   
-    response = requests.request("POST", url, headers=headers, data=json.dumps(payload))
+    print(json.dumps(payload))
+    print(json.dumps(payload).encode("utf-8"))
+    print(json.dumps(payload, ensure_ascii=False).encode("utf-8"))
+    response = requests.request(
+        "POST",
+        url,
+        headers=headers,
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+    )
     print(response.text)
     if response.json()["rejectedDocuments"]:
         raise Exception(f"File {file} is rejected.")
+
 
 if __name__ == "__main__":
     upload_dir = "../upload"
