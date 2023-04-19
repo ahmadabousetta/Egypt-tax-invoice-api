@@ -185,9 +185,9 @@ def upload_doc(invoice):
         "Content-Type": "application/json",
         "Authorization": f"Bearer {token}",
     }
-    print(json.dumps(payload))
-    print(json.dumps(payload).encode("utf-8"))
-    print(json.dumps(payload, ensure_ascii=False).encode("utf-8"))
+#     print(json.dumps(payload))
+#     print(json.dumps(payload).encode("utf-8"))
+#     print(json.dumps(payload, ensure_ascii=False).encode("utf-8"))
     response = requests.request(
         "POST",
         url,
