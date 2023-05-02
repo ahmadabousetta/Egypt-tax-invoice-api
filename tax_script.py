@@ -47,9 +47,10 @@ def upload_doc(invoice):
     df_main = pd.read_excel(invoice, nrows=1)
     df_main = df_main.loc[0]
 
-    # Always set invoice time to 5 minutes before submission to avoid late submission errors
+    # Always set invoice time to 65 minutes before submission to avoid late submission errors
+    # use 65 minutes to avoid daylight saving problems (invoice in future)     
     # remove next line if you want to use the invoice time in the excel sheet
-    df_main["date"] = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
+    df_main["date"] = datetime.datetime.utcnow() - datetime.timedelta(minutes=65)
     df_main["date"] = df_main["date"].strftime(
         "%Y-%m-%dT%H:%M:%SZ"
     )  # 2020-12-31T23:59:59Z
