@@ -6,10 +6,9 @@ set app_dir=%~dp0
 
 cd /d "%app_dir%"
 
-call .venv\Scripts\activate.bat
-@REM where python
+call conda activate taxes
 python tax_script.py
-@REM call deactivate
+call conda deactivate
 
 @REM cd "%cwd%"
 PAUSE
