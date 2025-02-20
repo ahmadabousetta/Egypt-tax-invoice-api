@@ -10,6 +10,6 @@ call conda activate taxes
 python tax_script.py
 call conda deactivate
 
-@REM cd "%cwd%"
+@REM cd /d "%cwd%"
 PAUSE
 
